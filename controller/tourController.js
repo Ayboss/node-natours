@@ -1,9 +1,82 @@
 const fs = require('fs');
+const multer = require('multer');
+const sharp = require('sharp');
 const Tour = require('./../models/tourModel');
 const APIfeatures = require('./../util/APIfeatures');
 const catchAsync = require('./../util/catchAsync');
 const AppError = require('./../util/appError');
 const factoryController = require('./factoryController');
+
+
+// MULTER CONFIGURATION
+  // const multerStorage = multer.diskStorage({
+  //   destination:(req,file,cb)=>{
+
+  //   } ,
+  //   filename: (req, file, cb)=>{
+
+  //   }
+  // })
+
+  const multerStorage = multer.memoryStorage();
+  const multerFilter = (req,file,cb)=>{
+    if(file.mimetype.startsWith('image')){
+      cb(null,true);
+    }else{
+      cb(new AppError('Not an image pls upload only images',400),false);
+    }
+  }
+
+
+
+  //  resize image 
+exports.resizeTourImages = catchAsync(async (req,res,next)=>{
+  if(!req.files.imageCover || !req.files.images) return next();
+    
+  //resize the image cover
+  req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`
+  await sharp(req.files.imageCover[0].buffer)
+    .resize(2000,1330)
+    .toFormat('jpeg')
+    .jpeg({quality:90})
+    .toFile(`public/img/tours/${req.body.imageCover}`);
+    
+  //resize images  
+  req.body.images = [];
+  await Promise.all(req.files.images.map(async (file,num)=>{
+      
+      const filepath =  `tour-${req.params.id}-${Date.now()}-${num + 1}.jpeg`
+      await sharp(file.buffer)
+        .resize(2000,1330)
+        .toFormat('jpeg')
+        .jpeg({quality:90})
+        .toFile(`public/img/tours/${filepath}`);
+      req.body.images.push(filepath);
+
+    })) 
+  return next();
+
+})
+
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter
+})
+
+exports.uploadImages = upload.fields([
+  {name: 'imageCover', maxCount: 1},
+  {name: 'images', maxCount: 3}
+]);
+// END MULTER CONFIGURATION
+
+
+
+exports.getTourImages = (req,res,next)=>{
+  console.log(req.files);
+  console.log(req.body);
+  next();
+}
 
 exports.top5tour = (req,res,next)=>{
   req.query.limit = '5';
