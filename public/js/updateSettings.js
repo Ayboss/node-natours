@@ -2,17 +2,19 @@ import axios from 'axios';
 import {showAlert} from './alerts';
 
 // function that update user when click
-export const updateUser = async (name,email)=>{
+export const updateSettings = async (data,type)=>{
+    
+    const url = (type === 'password')? 'http://localhost:3000/api/v1/users/updatepassword':'http://localhost:3000/api/v1/users/updateme'; 
     try{
         const response = await axios({
-            url: 'http://localhost:3000/api/v1/users/updateme',
+            url,
             method: 'patch',
-            data:{name,email}
+            data
         });
         if(response.data.status === 'success'){
             //send a success message
             console.log(response.data);
-            showAlert('success','update succesfully');
+            showAlert('success',`${type.toUpperCase()} update succesfully`);
         }
     }catch(err){
         console.log('bad bad')

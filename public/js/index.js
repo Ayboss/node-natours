@@ -1,6 +1,6 @@
 // import 'regenerator-runtime/runtime'
 import {login, logout} from './login';
-import {updateUser} from './updateSettings';
+import {updateSettings} from './updateSettings';
 import {displayMap} from './mapbox';
 
 const locations = document.getElementById('map');
@@ -13,6 +13,7 @@ console.log('bundle it is ');
 const loginSubmit = document.querySelector('#submit');
 const logoutBtn = document.querySelector('.nav__el--logout');
 const updateSubmit = document.querySelector('#updateUser');
+const updatePassword = document.querySelector('#updatePassword');
 
 if(loginSubmit){ 
     loginSubmit.addEventListener('click',function(e){
@@ -30,10 +31,33 @@ if(logoutBtn){
 
 if(updateSubmit){
     updateSubmit.addEventListener('submit',function(e){
-        console.log('ada');
         e.preventDefault();
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        updateUser(name,email)
+        const form = new FormData();
+        form.append('name',document.getElementById('name').value);
+        form.append('email',document.getElementById('email').value);
+        form.append('photo',document.getElementById('photo').files[0]);
+        updateSettings(form,'data');
     })
 }
+
+if(updatePassword){
+    updatePassword.addEventListener('submit',async function(e){
+        e.preventDefault();
+        document.getElementById('savePasswordBtn').textContent = 'UPDATING ...';
+        const password = document.getElementById('password').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const newPasswordConfirm = document.getElementById('newPasswordConfirm').value;
+        await updateSettings({password,newPassword,newPasswordConfirm},'password');
+        document.getElementById('savePasswordBtn').textContent = 'SAVE PASSWORD';
+        document.getElementById('password').value="";
+        document.getElementById('newPassword').value="";
+        document.getElementById('newPasswordConfirm').value="";
+
+    });
+}
+
+
+
+
+
+

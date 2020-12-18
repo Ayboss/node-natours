@@ -1,7 +1,56 @@
+const multer = require('multer');
+const sharp = require('sharp');
 const User = require('../models/userModel');
 const AppError = require('../util/appError');
 const catchError = require('../util/catchAsync');
 const factoryController = require('./factoryController');
+
+// multer configuration
+
+// const multerStorage = multer.diskStorage({
+//   destination: (req,file,cb)=>{
+//     cb(null,'public/img/users')
+//   },
+//   filename:(req,file,cb)=>{
+//     const ext = file.mimetype.split('/')[1];
+//     const name = `user-${req.user.id}-${Date.now()}.${ext}`;
+//     cb(null, name)
+//   }
+// })
+
+const multerStorage = multer.memoryStorage();
+
+const multerFilter = (req,file,cb)=>{
+  if(file.mimetype.startsWith('image')){
+    cb(null,true);
+  }else{
+    cb(new AppError('Not an image pls upload only images',400),false);
+  }
+}
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter
+});
+
+
+exports.uploadUserPhoto = upload.single('photo');
+
+//  resize image
+exports.resizeUserPhoto = (req,res,next)=>{
+  if(req.file){
+    req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+    sharp(req.file.buffer)
+    .resize(500,500)
+    .toFormat('jpeg')
+    .jpeg({quality:90})
+    .toFile(`public/img/users/${req.file.filename}`);
+  }
+  return next();
+}
+
+
+// end multer configuration
 
 const filterField = (obj,...fields)=>{
     const newObj = {};
@@ -31,12 +80,15 @@ exports.createUser = (req,res)=>{
 }
 
 exports.updateMe = catchError(async (req,res,next)=>{
+  console.log(req.file);
+  console.log(req.body);
   //send error if user tries updating password;
   if(req.body.password || req.body.passwordConfirm){
     return next(new AppError('cant update password field with this route, use updatepassword instead',401))
   }
   //filter body
   const filteredReq = filterField(req.body,'name','email');
+  if(req.file) filteredReq.photo = req.file.filename
   //update user
   const updatedUser = await User.findByIdAndUpdate(req.user._id,filteredReq,{
     new:true,

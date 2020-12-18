@@ -1989,7 +1989,7 @@ exports.logout = logout;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateUser = void 0;
+exports.updateSettings = void 0;
 
 var _axios = _interopRequireDefault(require("axios"));
 
@@ -1998,21 +1998,20 @@ var _alerts = require("./alerts");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // function that update user when click
-const updateUser = async (name, email) => {
+const updateSettings = async (data, type) => {
+  const url = type === 'password' ? 'http://localhost:3000/api/v1/users/updatepassword' : 'http://localhost:3000/api/v1/users/updateme';
+
   try {
     const response = await (0, _axios.default)({
-      url: 'http://localhost:3000/api/v1/users/updateme',
+      url,
       method: 'patch',
-      data: {
-        name,
-        email
-      }
+      data
     });
 
     if (response.data.status === 'success') {
       //send a success message
       console.log(response.data);
-      (0, _alerts.showAlert)('success', 'update succesfully');
+      (0, _alerts.showAlert)('success', `${type.toUpperCase()} update succesfully`);
     }
   } catch (err) {
     console.log('bad bad');
@@ -2020,7 +2019,7 @@ const updateUser = async (name, email) => {
   }
 };
 
-exports.updateUser = updateUser;
+exports.updateSettings = updateSettings;
 },{"axios":"../../node_modules/axios/index.js","./alerts":"alerts.js"}],"mapbox.js":[function(require,module,exports) {
 "use strict";
 
@@ -2086,6 +2085,7 @@ console.log('bundle it is ');
 const loginSubmit = document.querySelector('#submit');
 const logoutBtn = document.querySelector('.nav__el--logout');
 const updateSubmit = document.querySelector('#updateUser');
+const updatePassword = document.querySelector('#updatePassword');
 
 if (loginSubmit) {
   loginSubmit.addEventListener('click', function (e) {
@@ -2103,11 +2103,31 @@ if (logoutBtn) {
 
 if (updateSubmit) {
   updateSubmit.addEventListener('submit', function (e) {
-    console.log('ada');
     e.preventDefault();
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    (0, _updateSettings.updateUser)(name, email);
+    const form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', document.getElementById('photo').files[0]);
+    (0, _updateSettings.updateSettings)(form, 'data');
+  });
+}
+
+if (updatePassword) {
+  updatePassword.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    document.getElementById('savePasswordBtn').textContent = 'UPDATING ...';
+    const password = document.getElementById('password').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const newPasswordConfirm = document.getElementById('newPasswordConfirm').value;
+    await (0, _updateSettings.updateSettings)({
+      password,
+      newPassword,
+      newPasswordConfirm
+    }, 'password');
+    document.getElementById('savePasswordBtn').textContent = 'SAVE PASSWORD';
+    document.getElementById('password').value = "";
+    document.getElementById('newPassword').value = "";
+    document.getElementById('newPasswordConfirm').value = "";
   });
 }
 },{"./login":"login.js","./updateSettings":"updateSettings.js","./mapbox":"mapbox.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -2138,7 +2158,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60067" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50911" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

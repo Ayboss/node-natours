@@ -197,7 +197,6 @@ exports.updatePassword = catchError(async (req,res, next) =>{
   await user.save();
 
   // Log user by sending jwt
-
-    createSetToken(res,user,200);
+  createSetToken(res,user,200);
 })
  
