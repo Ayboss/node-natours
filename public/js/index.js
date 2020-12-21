@@ -1,6 +1,7 @@
 // import 'regenerator-runtime/runtime'
 import {login, logout} from './login';
 import {updateSettings} from './updateSettings';
+import {bookTour} from './stripe';
 import {displayMap} from './mapbox';
 
 const locations = document.getElementById('map');
@@ -9,11 +10,14 @@ if(locations){
 }
 
 console.log('bundle it is ');
+console.log('hey hey')
 
 const loginSubmit = document.querySelector('#submit');
 const logoutBtn = document.querySelector('.nav__el--logout');
 const updateSubmit = document.querySelector('#updateUser');
 const updatePassword = document.querySelector('#updatePassword');
+const bookingBtn = document.getElementById('book-tour');
+
 
 if(loginSubmit){ 
     loginSubmit.addEventListener('click',function(e){
@@ -24,7 +28,7 @@ if(loginSubmit){
         login(email,password);
     }); 
 }
-
+ 
 if(logoutBtn){
     logoutBtn.addEventListener('click',logout);
 }
@@ -56,6 +60,13 @@ if(updatePassword){
     });
 }
 
+if(bookingBtn){
+    bookingBtn.addEventListener('click',function(e){
+        e.target.textContent = 'Processing';
+        bookTour(e.target.dataset.tourId);
+        
+    })
+}
 
 
 

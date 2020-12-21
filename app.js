@@ -7,22 +7,24 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+
 const AppError = require('./util/appError');
 const viewRouter = require('./routes/viewRoute');
 const tourRouter = require('./routes/tourRoute');
 const userRouter = require('./routes/userRoute');
+const bookingRouter = require('./routes/bookingRoute');
 const reviewRouter = require('./routes/reviewRoute');
 const globalErrorHandler = require('./controller/errorController');
 const cookieParser = require('cookie-parser');
-
+ 
 const app = express();
 app.set('view engine','pug');
 app.set('views',path.join(__dirname,'views'));
 
 app.use(express.static(path.join(__dirname,'public')));
 //middleware
-// set security http headers
-app.use(helmet());
+// set security http headers, lol.... guy learn this stuff
+// app.use(helmet());
 //development logging
 if(process.env.NODE_ENV == 'development'){
   app.use(morgan('dev'));
@@ -67,6 +69,7 @@ app.use('/',viewRouter);
 app.use('/api/v1/tours',tourRouter);
 app.use('/api/v1/users',userRouter);
 app.use('/api/v1/reviews',reviewRouter);
+app.use('/api/v1/bookings',bookingRouter);
 
 app.all('*',(req,res,next)=>{
   // res.status(404).json({

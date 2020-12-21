@@ -1975,7 +1975,7 @@ const logout = async () => {
     });
 
     if (response.data.status === 'success') {
-      location.reload(true);
+      location.assign('/');
     }
   } catch (err) {
     (0, _alerts.showAlert)('error', 'error logging out');
@@ -2020,7 +2020,34 @@ const updateSettings = async (data, type) => {
 };
 
 exports.updateSettings = updateSettings;
-},{"axios":"../../node_modules/axios/index.js","./alerts":"alerts.js"}],"mapbox.js":[function(require,module,exports) {
+},{"axios":"../../node_modules/axios/index.js","./alerts":"alerts.js"}],"stripe.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.bookTour = void 0;
+
+var _axios = _interopRequireDefault(require("axios"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const stripe = Stripe('pk_test_51HQ7lpDwoBi0H5WUiGiUiMAVJgev2qxI1PdIC51eOyjreBb6OaKrPqZln4fTtWdG06q4VKSpRVldF4bvRDpu66W100g337g3on');
+
+const bookTour = async tourId => {
+  try {
+    const session = await (0, _axios.default)(`http://localhost:3000/api/v1/bookings/checkout-session/${tourId}`);
+    console.log(session);
+    await stripe.redirectToCheckout({
+      sessionId: session.data.session.id
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+exports.bookTour = bookTour;
+},{"axios":"../../node_modules/axios/index.js"}],"mapbox.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2072,6 +2099,8 @@ var _login = require("./login");
 
 var _updateSettings = require("./updateSettings");
 
+var _stripe = require("./stripe");
+
 var _mapbox = require("./mapbox");
 
 // import 'regenerator-runtime/runtime'
@@ -2082,10 +2111,12 @@ if (locations) {
 }
 
 console.log('bundle it is ');
+console.log('hey hey');
 const loginSubmit = document.querySelector('#submit');
 const logoutBtn = document.querySelector('.nav__el--logout');
 const updateSubmit = document.querySelector('#updateUser');
 const updatePassword = document.querySelector('#updatePassword');
+const bookingBtn = document.getElementById('book-tour');
 
 if (loginSubmit) {
   loginSubmit.addEventListener('click', function (e) {
@@ -2130,7 +2161,14 @@ if (updatePassword) {
     document.getElementById('newPasswordConfirm').value = "";
   });
 }
-},{"./login":"login.js","./updateSettings":"updateSettings.js","./mapbox":"mapbox.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+
+if (bookingBtn) {
+  bookingBtn.addEventListener('click', function (e) {
+    e.target.textContent = 'Processing';
+    (0, _stripe.bookTour)(e.target.dataset.tourId);
+  });
+}
+},{"./login":"login.js","./updateSettings":"updateSettings.js","./stripe":"stripe.js","./mapbox":"mapbox.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -2158,7 +2196,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50911" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49840" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

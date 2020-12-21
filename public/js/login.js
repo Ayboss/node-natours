@@ -29,7 +29,7 @@ export const logout = async ()=>{
             method: 'get'
         })
         if(response.data.status === 'success'){
-            location.reload(true);
+            location.assign('/');
         }
     }catch(err){
         showAlert('error','error logging out');
