@@ -31,7 +31,6 @@ tourRouter
     authController.restrictTo('admin','lead-guide'),
     tourController.uploadImages,
     tourController.resizeTourImages,
-    tourController.getTourImages,
     tourController.updateTour)
 .delete(authController.protect,authController.restrictTo('admin','lead-guide'),tourController.deleteTour);
 

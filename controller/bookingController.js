@@ -1,6 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Tour = require('../models/tourModel');
 const Booking = require('../models/bookingModel');
+const factoryController = require('../controller/factoryController');
 const catchError = require('../util/catchAsync');
 const AppError = require('../util/appError');
 
@@ -40,3 +41,9 @@ exports.createBookingCheckout = catchError(async (req,res,next)=>{
     //redirect to page
     res.redirect(req.originalUrl.split('?')[0])
 })
+
+exports.getAllBookings = factoryController.getAll(Booking);
+exports.createBooking =factoryController.createOne(Booking);
+exports.getBooking = factoryController.getOne(Booking);
+exports.updateBooking = factoryController.updateOne(Booking)
+exports.deleteBooking = factoryController.deleteOne(Booking)

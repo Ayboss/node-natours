@@ -4,7 +4,7 @@ import {showAlert} from './alerts';
 export const login = async (email,password)=>{
    try{
     const response = await axios({
-        url:'http://localhost:3000/api/v1/users/login',
+        url:'/api/v1/users/login',
         method:'post',
         data:{email,password}
         })
@@ -17,7 +17,6 @@ export const login = async (email,password)=>{
         }
         //redirect
     }catch(err){
-        console.log('bad bad')
         showAlert('error',err.response.data.message)
     }   
 }
@@ -25,7 +24,7 @@ export const login = async (email,password)=>{
 export const logout = async ()=>{
     try{
         const response =  await axios({
-            url:'http://localhost:3000/api/v1/users/logout',
+            url:'/api/v1/users/logout',
             method: 'get'
         })
         if(response.data.status === 'success'){

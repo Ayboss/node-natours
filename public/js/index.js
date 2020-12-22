@@ -9,8 +9,7 @@ if(locations){
     displayMap(JSON.parse(locations.dataset.locations));
 }
 
-console.log('bundle it is ');
-console.log('hey hey')
+console.log('bundle it is ...');
 
 const loginSubmit = document.querySelector('#submit');
 const logoutBtn = document.querySelector('.nav__el--logout');

@@ -157,8 +157,7 @@ exports.isLoginIn = async (req,res,next)=>{
  try{
     if(req.cookies.jwt){   
       //verify token;
-      const decode = await promisify(jwt.verify)(req.cookies.jwt,process.env.JWT_SECRET)
-      console.log(decode);
+      const decode = await promisify(jwt.verify)(req.cookies.jwt,process.env.JWT_SECRET);
       //check if user still exits
       const currentUser = await User.findById(decode.id);
       if(!currentUser){
@@ -190,7 +189,6 @@ exports.restrictTo = (...roles) => {
 exports.updatePassword = catchError(async (req,res, next) =>{
   //Get user from collection via;
   const user = await User.findById(req.user._id).select("+password");
-  console.log(user);
   //match posted password
   if(!(await user.correctPassword(req.body.password, user.password))){
     return next(new AppError('incorrect password', 401));

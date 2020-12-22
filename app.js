@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const compression = require('compression');
 
 const AppError = require('./util/appError');
 const viewRouter = require('./routes/viewRoute');
@@ -48,6 +49,7 @@ app.use(hpp({
     'maxGroupSize'
   ]
 }));
+app.use(compression());
 const limiter = rateLimit({
 max: 100,
 windowMs: 60*60*1000,
@@ -59,7 +61,7 @@ app.use('/api',limiter);
 app.use((req,res,next)=>{
   req.setTime = new Date().toISOString();
   next();
-})
+}) 
 
 
 

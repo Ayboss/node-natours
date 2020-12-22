@@ -4,7 +4,7 @@ import {showAlert} from './alerts';
 // function that update user when click
 export const updateSettings = async (data,type)=>{
     
-    const url = (type === 'password')? 'http://localhost:3000/api/v1/users/updatepassword':'http://localhost:3000/api/v1/users/updateme'; 
+    const url = (type === 'password')? '/api/v1/users/updatepassword':'/api/v1/users/updateme'; 
     try{
         const response = await axios({
             url,
@@ -13,11 +13,10 @@ export const updateSettings = async (data,type)=>{
         });
         if(response.data.status === 'success'){
             //send a success message
-            console.log(response.data);
+            // console.log(response.data);
             showAlert('success',`${type.toUpperCase()} update succesfully`);
         }
     }catch(err){
-        console.log('bad bad')
         showAlert('error',err.response.data.message)
     }
 }

@@ -80,8 +80,6 @@ exports.createUser = (req,res)=>{
 }
 
 exports.updateMe = catchError(async (req,res,next)=>{
-  console.log(req.file);
-  console.log(req.body);
   //send error if user tries updating password;
   if(req.body.password || req.body.passwordConfirm){
     return next(new AppError('cant update password field with this route, use updatepassword instead',401))
@@ -94,7 +92,7 @@ exports.updateMe = catchError(async (req,res,next)=>{
     new:true,
     runValidators:true
   })
-  console.log('users', updatedUser)
+  // console.log('users', updatedUser)
   //send response back
   res.status(200).send({
     status:'success',

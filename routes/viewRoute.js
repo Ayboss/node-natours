@@ -6,6 +6,7 @@ const router = express.Router();
 
 //PUG TEMPLATE
 router.get('/me', authController.protect, viewController.userAccount)
+router.get('/my-tour', authController.protect, viewController.getUserTour)
 router.post('/submit-user-data', 
     authController.protect, 
     viewController.updateUserData);

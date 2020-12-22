@@ -72,8 +72,6 @@ exports.uploadImages = upload.fields([
 
 
 exports.getTourImages = (req,res,next)=>{
-  console.log(req.files);
-  console.log(req.body);
   next();
 }
 
