@@ -18,7 +18,7 @@ export const login = async (email,password)=>{
         //redirect
     }catch(err){
         showAlert('error',err.response.data.message)
-    }   
+    }    
 }
 
 export const logout = async ()=>{

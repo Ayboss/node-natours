@@ -19,6 +19,7 @@ const globalErrorHandler = require('./controller/errorController');
 const cookieParser = require('cookie-parser');
  
 const app = express();
+app.use(compression());
 app.set('view engine','pug');
 app.set('views',path.join(__dirname,'views'));
 
@@ -49,7 +50,7 @@ app.use(hpp({
     'maxGroupSize'
   ]
 }));
-app.use(compression());
+
 const limiter = rateLimit({
 max: 100,
 windowMs: 60*60*1000,
