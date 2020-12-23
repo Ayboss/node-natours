@@ -9,6 +9,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const compression = require('compression');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const AppError = require('./util/appError');
 const viewRouter = require('./routes/viewRoute');
@@ -39,7 +40,7 @@ if(process.env.NODE_ENV == 'development'){
 }
 
 app.post('/webhook-checkout',
-      express.raw({type: 'application/json'}),
+      bodyParser.raw({type: 'application/json'}),
       bookingController.webhookCheckout);
 
 //body parser to read data from req
