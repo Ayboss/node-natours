@@ -12,14 +12,14 @@ const setJWTToken=(id)=>{
   });
 }
 
-const createSetToken = (res,user,statusCode)=>{
+const createSetToken = (req,res,user,statusCode)=>{
   //login user;
   const token = setJWTToken(user._id);
   const cookieOption = {
     expires: new Date(Date.now()+ process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
-    httpOnly: true
+    httpOnly: true,
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
   }
-  if(process.env.NODE_ENV === 'production') cookieOption.secure = true;
   //send jwt via cookie
   res.cookie('jwt',token,cookieOption);
   //don't return password
@@ -45,7 +45,7 @@ exports.signup = catchError(async (req,res,next)=>{
     const url = `${req.protocol}://${req.get('host')}/me`;
     await new Email(newUser,url).sendWelcome();
     //login user;
-    createSetToken(res,newUser,200);
+    createSetToken(req,res,newUser,200);
 });
 
 exports.login = catchError(async (req,res,next)=>{
@@ -59,7 +59,7 @@ exports.login = catchError(async (req,res,next)=>{
   if(!user || !(await user.correctPassword(password, user.password))){
     return next(new AppError('incorrect email or password',401));
   }
-    createSetToken(res,user,200);
+    createSetToken(req,res,user,200);
 })
 
 exports.logout =  catchError(async (req,res,next)=>{
@@ -122,7 +122,7 @@ exports.resetPassword = catchError(async (req, res, next)=>{
   user.passwordResetExpires = undefined
   await user.save();
   //send jwt authorization token
-    createSetToken(res,user,200);
+    createSetToken(req,res,user,200);
 })
 
 exports.protect = catchError(async (req,res,next)=>{
@@ -200,6 +200,6 @@ exports.updatePassword = catchError(async (req,res, next) =>{
   await user.save();
 
   // Log user by sending jwt
-  createSetToken(res,user,200);
+  createSetToken(req,res,user,200);
 })
  

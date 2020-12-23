@@ -8,6 +8,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const compression = require('compression');
+const cors = require('cors');
 
 const AppError = require('./util/appError');
 const viewRouter = require('./routes/viewRoute');
@@ -16,21 +17,31 @@ const userRouter = require('./routes/userRoute');
 const bookingRouter = require('./routes/bookingRoute');
 const reviewRouter = require('./routes/reviewRoute');
 const globalErrorHandler = require('./controller/errorController');
+const bookingController = require('./controller/bookingController');
 const cookieParser = require('cookie-parser');
  
 const app = express();
+app.enable('trust proxy');
 app.use(compression());
 app.set('view engine','pug');
 app.set('views',path.join(__dirname,'views'));
 
 app.use(express.static(path.join(__dirname,'public')));
 //middleware
+//set cross origin request headers
+app.use(cors()); 
+app.options('*',cors());
 // set security http headers, lol.... guy learn this stuff
 // app.use(helmet());
 //development logging
 if(process.env.NODE_ENV == 'development'){
   app.use(morgan('dev'));
 }
+
+app.post('/webhook-checkout',
+      express.raw({type: 'application/json'}),
+      bookingController.webhookCheckout);
+
 //body parser to read data from req
 app.use(express.json({limit:'10kb'}));
 //allow cookie to be parsed too
