@@ -3,6 +3,7 @@ import {login, logout} from './login';
 import {updateSettings} from './updateSettings';
 import {bookTour} from './stripe';
 import {displayMap} from './mapbox';
+import {showAlert} from './alerts';
 
 const locations = document.getElementById('map');
 if(locations){
@@ -16,7 +17,7 @@ const logoutBtn = document.querySelector('.nav__el--logout');
 const updateSubmit = document.querySelector('#updateUser');
 const updatePassword = document.querySelector('#updatePassword');
 const bookingBtn = document.getElementById('book-tour');
-
+const alertMessage = document.querySelector('body').dataset.alert;
 
 if(loginSubmit){ 
     loginSubmit.addEventListener('click',function(e){
@@ -67,7 +68,6 @@ if(bookingBtn){
     })
 }
 
-
-
-
-
+if(alertMessage){
+    showAlert('success',alertMessage,7)
+}
